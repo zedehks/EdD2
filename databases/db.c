@@ -18,65 +18,68 @@ typedef struct
 	menu_t* submenu;
 }option_t;
 
-menu_t get_menu(char* json); 
+int get_menu(char* json, menu_t* menu); 
+vector read_file(FILE* menu, int c);
 vector parse_array(FILE* menu, int c);
-void parse_option(FILE* menu, vector* options, int c);
+
 void print_menu(menu_t m);
 
 int main()
 {
-	//menu_t menu_options = get_menu("menu.json");
+	menu_t menu;
+	int result = get_menu("menu.json", &menu);
+	if(result == -1)
+		printf("\n\nError reading json menu file\n\n");
 
 	int input;
 	bool can_exit = false;
 	
 }
 
-menu_t get_menu(char* json)
+int get_menu(char* json, menu_t* menu)
 {
-	int c;
-	FILE* menu;
-	menu = fopen(json,"r");
-	if(!menu)
-		return ;//NULL;
+	FILE* m;
+	m = fopen(json,"r");
+	if(!m)
+		return -1;//NULL;
 
+	int c;
+	menu.options -> read_file(m,i);
+	
+
+	
+	fclose(m);
+}
+
+// I've gotta get a crapton of recursive mileage outta this sheisse lol
+vector read_file(FILE* menu, int c)
+{
 	while( (c=getc(menu)) != EOF)
 	{
 		switch(c)
 		{
 			case '[':
-				parse_array(menu, c);
+				//parse_array(menu, c);
 				break;
 			case '{':
-				parse_option(menu, options, c);
+				//parse_option(menu, options, c);
 				break;
 		}
 		
 	}
-	
-
-	
-	}
-	fclose(menu);
 }
+
 
 vector parse_array(FILE* menu, int c)
 {
-	vector options;
-	v_init(options, 4);
-
-
-	while( (c=getc(menu)) != EOF)
+	vector array;
+	if(v_init(array, 2) != 1)
 	{
-		switch(c)
-		{
-			case '[':
-				parse_array(menu);
-				break;
-			case '{':
-				parse_option(menu, options);
-				break;
-		}
-		
+		printf("\n\nSomething went wrong with the vector!\n\n");
+		return;
 	}
+
+	
+
+
 }
