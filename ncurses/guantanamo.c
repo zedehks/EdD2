@@ -34,6 +34,12 @@ typedef struct
 	int row_count;
 	block blocks[64][64];
 }level_t;
+typedef struct
+{
+	char* name;
+	int score;
+	int ranking;
+} player_score;
 
 level_t gen_level(int level)
 {
@@ -58,6 +64,7 @@ level_t gen_level(int level)
 						l.blocks[i][j].value = 20;
 						l.blocks[i][j].sprite = "$$$$";
 						break;
+					case 2:
 					case 3:
 					case 4:
 						l.blocks[i][j].value =10;
@@ -89,47 +96,35 @@ void clear_scores()
 		mvprintw(64,0,"error fugg");
 		return;
 	}
-	char* names[9] = { "ADH","JSG","MSL","HRN","GRG","ALB","RDL","FGN","RML"};
+	char* names[9] = { "HTL","JSG","MSL","HMM","GOE","SPR","HSS","FGL","ROM"};
 	for(int i = 1;i <=9;i++)
 	{
-		fprintf(f,"%d %s-6000000\n",i,names[i-1]); 
+		fprintf(f,"%s\t6000000\n",names[i-1]); 
 	}	
 	fclose(f);
 }
 void check_score(int newscore)
 {
-	/*TODO
-	 * FILE* f= fopen("iwillnever.score","r+");
+	FILE* f= fopen("iwillnever.score","r+");
        	if(f == NULL) 
 	{
 		mvprintw(64,0,"error fugg");
 		return;
 	}	
-	int score;
-	int ranking;
 	
-	char buf[20];
-	int i = 0;
-	char* endptr;
-	int location;
-
-	fseek(f, 0, SEEK_SET );
-	location = ftell(f);
-	while (fgets(buf, sizeof buf, f) != NULL) 
+	fseek(f,0,SEEK_END);
+	long f_size = ftell(f);
+	fseek(f,0,SEEK_SET);
+	char buffer[f_size];
+	fread(buffer,f_size,1,f);
+	fclose(f);
+	
+	player_score scores[9];
+	for(int i=0;i<9;i++)
 	{
-		location = ftell(f);
-		buf = strtok(buf,"-");
-		buf = strtok(NULL,"-");
-		score = strtoimax(buf,&endptr,0);
-		if(newscore > score)
-		{
-			mvprintw(MAXIMUM_DOWN+6,0,"HIGH SCORE; ENTER NAME: ");
-		       	char* name; 
-	       		scanf("%s",name);		       
-			buf = snprintf("%d %s-%d",i,name,newscore);
-		}
+		scores[i].ranking = i+1;
+		sscanf(buffer,"%s\t%d",scores[i].name,scores[i].score);
 	}
-	fclose(f);*/
 }
 
 void get_highscores()
@@ -150,7 +145,7 @@ void get_highscores()
 	{
 		//fscanf(buf,"%d\t%12s\t%d\n",&ranking,name,&score);
 		//mvprintw(5+(i++),8,"%30%d\t%s\t%d\n",ranking,name,score);
-		mvprintw(5+(i++),0,"%s",buf);
+		mvprintw(5+(i++),0,"%d\t%s",i,buf);
 	}
 	mvprintw(5+i,0,"\n\nESC ESCAPES, SPACEBAR PLAYS, R RESETS (SCORES)");
 	fclose(f);
@@ -174,7 +169,7 @@ int main(void)
 	while((c = getch()) != 27) 
 	{
 		//draw_frame(0);
-		mvprintw(2,0,"GUANTANAMO");
+		mvprintw(2,0,"\tGUANTANAMO");
 		refresh();
 		get_highscores();
 		refresh();

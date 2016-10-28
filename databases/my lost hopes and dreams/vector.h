@@ -8,9 +8,9 @@
 typedef struct dynamic_array_struct
 {
   void** data;
-  int capacity; /*capacity*/
-  int size; /*current # of crap inside vector*/
-} vector;
+  int* capacity; /*capacity*/
+  int* size; /*current # of crap inside vector*/
+}vector;
 
 int v_init(vector* v, int capacity);
 void v_free(vector* v);
