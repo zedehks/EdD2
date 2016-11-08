@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void printstring(char* c)
+{
+	printf("\n%s\n",c);
+}
+char* gets()
+{
+	return "benis";
+}
+int main()
+{
+	char* s = gets();
+	printstring(s);
+}

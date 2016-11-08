@@ -17,10 +17,17 @@ void print_p(person* p);
 void print_h();
 
 int list_size(person* p);
-char* print_fs(person* p);
-char* length_delim(person* p);
-char* char_delim(person* p);
-char* dir_list(person* p);
+const char* print_fs(person* p);
+char* print_ld(person* p);
+char* print_cd(person* p);
+char* print_dir(person* p);
+
+person* fixed_size(char* buffer);
+person* ln_delim(char* buffer);
+person* char_delim(char* buffer);
+person* dir_ls(char* buffer);
+
+
 
 char* names[10] = {"Goku","Vegeta","Krilin","Gohan","Saitama","Dio","Naruto","Sonic","Guts","Rintarou"};
 char* surnames[10] = {"Sayan","Okabe","Pérez","the Hedgehog","Chasilema","Chávez","Yamamoto","Goebbels","Simpson","Mussolini"};
@@ -51,7 +58,9 @@ int main (int argc, char *argv[])
 			person* hito = gen_person();
 			hito->next = gen_person();
 			hito->next->next = gen_person();
-			hito->next->next->next = gen_person();
+			//hito->next->next->next = gen_person();
+
+			person* ningen = NULL;
 
 			if(!strcmp("-l",argv[1]))
 			{
@@ -61,6 +70,8 @@ int main (int argc, char *argv[])
 				print_p(hito);
 				char* buffer = print_fs(hito);
 				printf("\nString containing list: %s\n",buffer);
+				ningen = fixed_size(buffer);
+				print_p(ningen);
 
 			}
 			else
@@ -77,17 +88,26 @@ int main (int argc, char *argv[])
 				free(tmp);
 			}	
 			free(hito);
+			while(ningen!=NULL)
+			{
+				person *tmp = ningen;
+				ningen = ningen->next;
+				free(tmp);
+			}	
+			free(ningen);
+
 		}
 	
 	}
 }
-char* print_fs(person* p)
+const char* print_fs(person* p)
 {
 	char name[20]; 
 	char surname[20]; 
 	int age = 0;
 	char age_s[6];
-	int ls = 44* list_size(p);
+	int ls = 44* (list_size(p));
+	printf("\n%d\n",ls);
 	char buffer[ls];
 
 	int i=0;
@@ -103,22 +123,68 @@ char* print_fs(person* p)
 		age = p->age;
 		sprintf(age_s,"%d",age);
 		strcat(buffer,name);
+		int c = 20-strlen(name);
+		for(int i = 0; i < c; i++)
+		{
+			strcat(buffer,"-");
+		}
 		strcat(buffer,surname);
+		c = 20-strlen(surname);
+		for(int i = 0; i < c; i++)
+		{
+			strcat(buffer,"-");
+		}
+
 		strcat(buffer,age_s);
+		c = 4-strlen(age_s);
+		for(int i = 0; i < c; i++)
+		{
+			strcat(buffer,"-");
+		}
 		p = p->next;
 	}
 	return buffer;
 }
+person* fixed_size(char* buffer)
+{
+	person* p = (person*)malloc(sizeof(person));
+	char name[20];
+	for(int i = 0;i<20;i++)	name[i] = 0;
+	char surname[20];
+	for(int i = 0;i<20;i++)	surname[i] = 0;
+	int pointer =0;
+	
+	printf("\n%s\n",buffer);
+	strncpy(&name,buffer,20);
+	//name[20] = '\0';
+	strncpy(&surname,buffer+20,20);
+	//name[39] = '\0';
+	strtok(&name,"-");
+	//strtok(&surname,"-");
+	p->given_name = name;
+	p->surname = surname;
+	return p;
+}
+
+
+
+/** 
+ * 	BEGIN RANDOM UTILS 
+ * 	(these should really be in another .c
+ * 	but lol i's lazy
+ **/
+
 
 
 int list_size(person* p)
 {
-	int counter = 1;
+	int counter = 0;
 	while(p != NULL)
 	{
 		counter++;
 		p = p->next;
 	}
+	printf("\n%d\n",counter);
 	return counter;
 }
 
@@ -139,10 +205,10 @@ void print_p(person* p)
 {
 	while( p!=NULL)	
 	{
-		printf("Name: %s %s\nAge: %d\n",p->given_name,p->surname,p->age);
+		printf("\nName: %s %s\nAge: %d",p->given_name,p->surname,p->age);
 		p = p->next;
 	}
-	printf("##END OF LIST##\n");
+	printf("\n##END OF LIST##\n");
 }
 //print the helpening help of help halp pls
 void print_h()
