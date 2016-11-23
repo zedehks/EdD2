@@ -1,3 +1,6 @@
+#ifndef TABLE_H
+#define TABLE_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #define RETURN_OK 1
@@ -13,3 +16,4 @@ struct table
 };
 
 int init_table(table** t, int c);
+#endif /* TABLE_H */

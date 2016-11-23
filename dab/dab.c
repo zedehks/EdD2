@@ -4,7 +4,7 @@
 
 #include  "table.h"
 #include "command.h"
-
+#include "block.h"
 int main()
 {
 	/*table* t = NULL;
@@ -13,13 +13,16 @@ int main()
 	if(i == RETURN_OK) //printf("lol\n");
 		printf("\n%d capacity\n",t->capacity);
 	free(t);*/
-
-	int exit=0;
-
+	block_t* b;
+	b = init_block_t(NULL,BLOCK_CAPACITY);
+	
 	printf("\n~~DAB: The DatABase~~\n");
 	print_help();
+
+	int exit=0;
 	while(exit == 0)
 	{
 		exit = get_command(); 
 	}
+	free_block(&b);
 }

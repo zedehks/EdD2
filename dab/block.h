@@ -1,6 +1,10 @@
+#ifndef BLOCK_H
+#define BLOCK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "table.h"
 #define BLOCK_CAPACITY 4
 
 typedef struct block_t block_t;
@@ -17,6 +21,8 @@ struct block_t_header
 	int capacity;
 };
 
-void init_block_t(block_t** previous, int c);
-void init_block_header(block_t** previous, int c);
+block_t* init_block_t(block_t** previous, int c);
+block_t_header* init_block_header(block_t** previous, int c);
+void free_block(block_t** b);
+#endif /* BLOCK_H */
 

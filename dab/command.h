@@ -1,3 +1,6 @@
+#ifndef COMMAND_H
+#define COMMAND_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,3 +13,4 @@ int get_command();
 void add_table(char name[8]);
 void print_help();
 int parse_command(char command[32], char* comparison);
+#endif /* COMMAND_H */

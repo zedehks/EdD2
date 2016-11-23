@@ -6,7 +6,7 @@
 typedef struct table table;
 struct table
 {
-	table* next;
+	//ZQtable* next;
 	int first_field_block;
 	int first_registry_block;
 	int capacity;	
