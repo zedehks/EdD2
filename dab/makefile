@@ -10,3 +10,5 @@
 #	$(CC) -o $@ $^ $(CFLAGS) 
 all: 
 	gcc -o DAB dab.c table.c command.c block.c -std=c99
+wine:
+	winegcc -o DAB.exe dab.c table.c command.c block.c -std=c99

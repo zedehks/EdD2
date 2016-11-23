@@ -14,7 +14,7 @@ int main()
 		printf("\n%d capacity\n",t->capacity);
 	free(t);*/
 	block_t* b;
-	b = init_block_t(NULL,BLOCK_CAPACITY);
+	b = init_block_t(NULL);
 	
 	printf("\n~~DAB: The DatABase~~\n");
 	print_help();
@@ -22,7 +22,7 @@ int main()
 	int exit=0;
 	while(exit == 0)
 	{
-		exit = get_command(); 
+		exit = get_command(&b); 
 	}
 	free_block(&b);
 }
