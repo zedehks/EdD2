@@ -1,0 +1,11 @@
+#include "table.h"
+
+int init_table(table** t, int c)
+{
+	(*t) = malloc(sizeof(table));	
+	(*t)->capacity = c;
+	if(!(*t) == NULL)
+		return RETURN_OK;
+	return RETURN_ERROR;
+}
+
