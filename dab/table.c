@@ -4,7 +4,7 @@ int init_table(table** t, int c)
 {
 	(*t) = malloc(sizeof(table));	
 	(*t)->capacity = c;
-	(*t)->next = NULL;
+	//(*t)->next = NULL;
 	if(!(*t) == NULL)
 		return RETURN_OK;
 	return RETURN_ERROR;
@@ -13,10 +13,10 @@ int init_table(table** t, int c)
 int append_table(table** original,int c)
 {
 	table* t = NULL;
-	if(init_table(&t,c) == RETURN ERROR) 
+	if(init_table(&t,c) == RETURN_ERROR) 
 		return RETURN_ERROR;
 	table* tmp = (*original);
-	while(tmp->next != NULL)
+	//while(tmp->next != NULL)
 
 
 }

@@ -9,4 +9,4 @@
 #dabmake: $(OBJ)
 #	$(CC) -o $@ $^ $(CFLAGS) 
 all: 
-	gcc -o DAB dab.c table.c -std=c99
+	gcc -o DAB dab.c table.c command.c -std=c99
