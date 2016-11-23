@@ -17,9 +17,35 @@ int get_command()
 		print_help();
 	else if(parse_command(input,"exit") == TRUE)
 		return	CODE_EXIT;
+	else if(parse_command(input,"add") == TRUE)
+		add_table(input);
 	else
 		printf("?\n");
 	return 0;
+}
+
+void add_table(char* name)
+{
+	//we gotta grab the name from the command first
+	char* tmp;
+	tmp = strtok(name," ");
+	tmp = strtok(NULL," ");
+	if(tmp == NULL) 
+	{
+		printf("\nPlease insert an eight-character name.\n");
+		return;
+	}
+	//if(strlen(tmp > 8)) I'll look into why this aint needed later lol
+	{	
+		char tmp2[8+1];//max name size, plus the null char
+		for(int i =0;i<=8;i++)
+		{
+			tmp2[i] = tmp[i];
+		}
+		tmp2[8] = '\0';
+		strcpy(tmp,tmp2);
+	}
+	printf("\nCreated a new table \"%s\".\n",tmp);
 }
 
 int parse_command(char command[32],char* comparison)

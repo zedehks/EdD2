@@ -10,7 +10,7 @@
 #define TRUE 1
 
 int get_command();
-void add_table(char name[8]);
+void add_table(char* name);
 void print_help();
 int parse_command(char command[32], char* comparison);
 #endif /* COMMAND_H */
