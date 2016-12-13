@@ -30,6 +30,8 @@ int main()
 		
 		if(parse_command(input,"h") == 1) 
 		       	print_h();  
+		else if(parse_command(input,"quit") == 1) 
+			printf("?");
 		else if(parse_command(input,"q") == 1) 
 			exit =1;  
 		else if(parse_command(input,"a") == 1) 
@@ -40,6 +42,16 @@ int main()
 		}
 		else if(parse_command(input,"l") == 1) 
 			print_tree(&root);
+		else if(parse_command(input,"?") == 1) 
+			printf("Right back at ya.\n");
+		else if(parse_command(input,"¿") == 1) 
+			printf("You have to go back.\n");
+		else if(parse_command(input,"cyka") == 1) 
+			printf("Ah, I see you're a good friend of president Trump.\n");
+		else if(parse_command(input,"blyat") == 1) 
+			printf("Ah, I see you're a good friend of president Trump.\n");
+		else if(parse_command(input,"日本語") == 1) 
+			printf("お前の母は馬の顔有る。\n");
 		else
 			printf("?");
 	}

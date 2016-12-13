@@ -3,20 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NODE_CAPACITY 4
+#define NODE_CAPACITY 5
 #define KEY_CAPACITY NODE_CAPACITY-1
 
 typedef struct node node;
 
 struct node
 {
-	int keys[3];
+	int keys[KEY_CAPACITY];
 
-	node* child1;
-	node* child2;
-	node* child3;
-	node* child4;
-	
+	node* nodes[NODE_CAPACITY];
+
 	int n_keys;
 	int n_children;
 };
