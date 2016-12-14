@@ -36,12 +36,22 @@ int main()
 			exit =1;  
 		else if(parse_command(input,"a") == 1) 
 		{
-			int result = extract_int(input);
-			if(result != -1)
-				add(result,&root);
+			int value = extract_int(input);
+			int result = 0;
+			if(value != -1)
+				result = add(value,&root);
+			if(result == -1)
+				split(value,&root);
+			order_keys(&root);
 		}
 		else if(parse_command(input,"l") == 1) 
-			print_tree(&root);
+			print_tree(0,&root);
+		
+		//temporary! remove later!
+		else if(parse_command(input,"o") == 1) 
+			order_keys(&root);
+		
+		//just for fun
 		else if(parse_command(input,"?") == 1) 
 			printf("Right back at ya.\n");
 		else if(parse_command(input,"¿") == 1) 
@@ -49,7 +59,7 @@ int main()
 		else if(parse_command(input,"cyka") == 1) 
 			printf("Ah, I see you're a good friend of president Trump.\n");
 		else if(parse_command(input,"blyat") == 1) 
-			printf("Ah, I see you're a good friend of president Trump.\n");
+			printf("The CIA would like to have a word with you.\n");
 		else if(parse_command(input,"日本語") == 1) 
 			printf("お前の母は馬の顔有る。\n");
 		else

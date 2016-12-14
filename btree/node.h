@@ -20,6 +20,7 @@ struct node
 
 node* node_init();
 int add(int value, node** root);
-void print_tree(node** root);
-
+int split(int value, node** root);
+void print_tree(int level, node** root);
+void order_keys(node** root);
 #endif /* NODE_H */

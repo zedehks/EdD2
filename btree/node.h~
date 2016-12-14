@@ -13,17 +13,14 @@ struct node
 	int keys[KEY_CAPACITY];
 
 	node* nodes[NODE_CAPACITY];
-	/*node* child1;
-	node* child2;
-	node* child3;
-	node* child4;*/
-	
+
 	int n_keys;
 	int n_children;
 };
 
 node* node_init();
 int add(int value, node** root);
+int split(int value, node** root);
 void print_tree(node** root);
-
+void order_keys(node** root);
 #endif /* NODE_H */
