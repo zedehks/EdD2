@@ -12,17 +12,15 @@ int init_block(char type,int number, Block** b)
 	switch(type)
 	{
 		case 't':
-		(*b)->capacity = 3;//can fit 3 tables per block
-		for(int i = 0;i<3;i++)
+		for(int i = 0;i<4;i++)
 			(*b)->tables[i] = 0;
 		break;
-		case 'f':
+		/*case 'f':
 		default:
-		(*b)->capacity = 0;
-		//(*b)->content = NULL;
+		//(*b)->content = NULL;*/
 
 	}
-	(*b)->next = 0;
+	(*b)->next = 0;// Remember! not included in binary file!
 	return 1;
 }
 int append_block(Block** first, Block** second)

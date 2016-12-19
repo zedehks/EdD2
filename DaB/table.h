@@ -13,5 +13,16 @@ struct table
 	int first_field_block;//4 bytes
 };
 
+typedef struct field Field;
+
+struct field
+{
+	char name[9]; //9 bytes
+	int first_registry_block;//4 bytes
+	int next_field_block;//4 bytes
+};
+
+
 int init_table(char name[9], Table** t, int block); 
+int init_field(char name[9], Field** f, int block_cur, int block_next); 
 #endif /* TABLE_H  */

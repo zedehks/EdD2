@@ -88,15 +88,23 @@ int read_tape()
 	Block* tmp = head_block;
 	while(tmp)
 	{
-		//int t_int = tmp->n_block;	
-		//char t_char = tmp->type;	
-		//unsigned short t_short = tmp->capacity;	
-		//TODO: write content of block
-		//char t_pointer[8] = {0,0,0,0,0,0,0,0};
+		int t_int;
+		char t_char;
+		int table_block;
+		char table_name[9];
 		
-		fread(&(head_block->n_block),1,sizeof(int),f);
-		fread(&(head_block->type),1,sizeof(char),f);
-		fread(&(head_block->capacity),1,sizeof(short),f);
+		fread(&t_int,1,sizeof(int),f);
+		fread(&t_char,1,sizeof(char),f);
+		init_block(t_char,t_int,&tmp);
+		
+		for(int i = 0;i<4;i++)
+		{
+			fread(table_name,9,sizeof(char),f);
+			fread(&table_block,1,sizeof(int),f);
+			init_table(table_name,&(tmp->tables[i]),table_block);
+			//strcpy(tmp->tables[i]->name,table_name);
+			//tmp->tables[i]->first_field_block;
+		}
 		tmp = tmp->next;
 	}
 	return 1;
@@ -113,15 +121,27 @@ int write_tape()
 	{
 		int t_int = tmp->n_block;	
 		char t_char = tmp->type;	
-		unsigned short t_short = tmp->capacity;	
-		//TODO: write content of block
-		//char t_pointer[8] = {0,0,0,0,0,0,0,0};
+		char table_name[9];
 		
 		fwrite(&t_int,1,sizeof(int),f);
 		fwrite(&t_char,1,sizeof(char),f);
-		fwrite(&t_short,1,sizeof(short),f);
-		t_char = 0;
-		fwrite(&t_short,8,sizeof(char)*8,f);
+		for(int i = 0;i<4;i++)
+		{
+			if(tmp->tables[i])
+			{
+				strcpy(table_name,tmp->tables[i]->name);
+				t_int = tmp->tables[i]->first_field_block; 
+				fwrite(table_name,9,sizeof(char),f);
+				fwrite(&t_int,1,sizeof(int),f);
+			}
+			else
+			{
+				t_char = 0;
+				fwrite(&t_char,13,sizeof(char),f);
+			}
+		}
+		t_char = 0;			  //write crap 
+		fwrite(&t_char,7,sizeof(char),f);//so block reaches 64 Bytes
 		tmp = tmp->next;
 	}
 	//TODO: write blocks here
