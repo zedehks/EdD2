@@ -2,7 +2,7 @@
 #define TABLE_H
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #define B_CAPACITY 3// 3 tables at most per block
 
 typedef struct table Table;
@@ -13,5 +13,5 @@ struct table
 	int first_field_block;//4 bytes
 };
 
-int init_table(char name[9], Table* t); 
+int init_table(char name[9], Table** t, int block); 
 #endif /* TABLE_H  */

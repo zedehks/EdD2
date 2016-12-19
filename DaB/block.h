@@ -24,6 +24,7 @@ typedef struct
 	Table* table3; 
 }block_table;
 
-int init_block(char type, int number,  Block* b);
-int append_block(Block* first, Block* next);
+int init_block(char type, int number,  Block** b);
+int append_block(Block** first, Block** next);
+void free_block(Block** b);
 #endif /* BLOCK_H */

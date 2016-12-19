@@ -1,2 +1,2 @@
 ALL: 
-	gcc -o btree btree.c node.c -std=c99 -g
+	gcc -o dab dab.c block.c -std=c99 -g
