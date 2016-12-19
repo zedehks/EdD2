@@ -16,10 +16,16 @@ void clear();
 void reset();
 void print_tables();
 void update_metadata(int block);
-
+// in functions, tape = the file
+// should have renamed it, but ¯\_(°_°)_/¯
 int write_tape();
 int read_tape();
 
+//contiene info sobre los bloques disponibles
+//si un bloque en el char = 0 esta disponible
+//si == algun numero pero no 'f' esta parcialmente lleno de tablas
+//f means ur fugged, it's full
+//TODO: hacer que se creen nuevos metablocks cuando estos esten llenos
 struct metadata
 {
 	char blocks[62];
@@ -85,7 +91,11 @@ int read_tape()
 	fseek(f,0,SEEK_SET);	
 	fread(Metadata.blocks,1,62,f);
 	fread(&(Metadata.next_metablock),sizeof(short),1,f);
-	Block* tmp = head_block;
+	printf("Reading blocks... ");
+	for(int i = 0;i<62;i++)
+		printf("%d ",Metadata.blocks[i]);
+	printf("\nDone\n");
+	Block* tmp;// = head_block;
 	while(tmp)
 	{
 		int t_int;
@@ -95,19 +105,36 @@ int read_tape()
 		
 		fread(&t_int,1,sizeof(int),f);
 		fread(&t_char,1,sizeof(char),f);
-		init_block(t_char,t_int,&tmp);
+		if(init_block(t_char,t_int,&tmp) != 1)
+		{
+			printf("Cannot read block.\n");
+			return 0;
+		}
 		
+		printf("Read block %d.\n",tmp->n_block);
 		for(int i = 0;i<4;i++)
 		{
 			fread(table_name,9,sizeof(char),f);
 			fread(&table_block,1,sizeof(int),f);
+			if(table_name[0] == 0)
+			{
+				tmp->tables[i] = 0;
+				fseek(f,13,SEEK_CUR);
+				break;
+			}
 			init_table(table_name,&(tmp->tables[i]),table_block);
 			//strcpy(tmp->tables[i]->name,table_name);
 			//tmp->tables[i]->first_field_block;
 		}
+		if(tmp->n_block == 0)
+			head_block = tmp;
 		tmp = tmp->next;
 	}
-	return 1;
+	//head_block = tmp;
+	if(!head_block)
+		return 1;
+	printf("Cannot read block.\n");
+	return 0;
 }
 int write_tape()
 {
@@ -144,7 +171,6 @@ int write_tape()
 		fwrite(&t_char,7,sizeof(char),f);//so block reaches 64 Bytes
 		tmp = tmp->next;
 	}
-	//TODO: write blocks here
 	return 1;
 }
 int first_available_block(int output)
@@ -195,6 +221,7 @@ int interpret_input(char* input)
 	
 	
 	//just for fun
+	//these were already made for another program no I didnt waste time making these
 	else if(parse_command(input,"?") == 1) 
 		printf("Right back at ya.\n");
 	else if(parse_command(input,"¿") == 1) 
@@ -227,10 +254,14 @@ int parse_command(char command[32], char* comparison)
 void print_tables()
 {
 	Block* tmp = head_block;
-	while(!tmp)// && !tmp->content)
+	while(tmp)// && !tmp->content)
 	{
 		if(tmp->tables[0])
-			return;
+		{
+			printf("Table is NULL\n");
+			tmp=tmp->next;
+			continue;
+		}
 		printf("Table %s\n",tmp->tables[0]->name);
 		printf("Table %s\n",tmp->tables[1]->name);
 		printf("Table %s\n",tmp->tables[2]->name);
@@ -266,12 +297,12 @@ int add_table(char* name)
 		printf("Error adding table at block %d.\n",block);
 		return 0;
 	}
-	else if(block == 0)// no table created yet
+	else if(block == 0 && head_block)// no table created yet
 	{
 		init_table(tmp,&(head_block->tables[0]),block);
 		update_metadata(block);
-		/*printf("\nCreated a new table \"%s\"",((block_table*)head_block->block_content)->table1->name); 
-		printf(" at block %d.\n",head_block->n_block);*/
+		printf("\nCreated a new table \"%s\"",head_block->tables[0]->name);
+		printf(" at block %d.\n",head_block->n_block);
 		return 1;
 	}
 

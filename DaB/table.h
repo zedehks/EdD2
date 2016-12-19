@@ -22,7 +22,7 @@ struct field
 	int next_field_block;//4 bytes
 };
 
-
+//Sugeriria que los registros hasheados tambien sean definidos aca, por simplicitud
 int init_table(char name[9], Table** t, int block); 
 int init_field(char name[9], Field** f, int block_cur, int block_next); 
 #endif /* TABLE_H  */

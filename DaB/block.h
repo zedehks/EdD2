@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "table.h"
+#include "hash.h"
 #define BLOCK_SIZE 64//bytes per physical block
 typedef struct block_header Block;
 
@@ -15,6 +16,9 @@ struct block_header
 	{
 		Table* tables[4]; //52 bytes (4 tables, 13 bytes each);
 		Field* fields[3]; //51 bytes (3 fields, 17 bytes each);
+		int keys[12];
+		//por aqui iria la definicion de los valores hasheados
+		//en otras palabras, registros
 	};
 };//total 56-57 bytes (when writing, write several zeroes to fill space up to 64 bytes)
 
