@@ -9,9 +9,9 @@ typedef struct table Table;
 
 struct table
 {
-	char name[9]; //9 bytes
+	char name[8]; //9 bytes
 	int first_field_block;//4 bytes
 };
 
-int init_table(char name[9], Table** t, int block); 
+int init_table(char name[8], Table** t, int block); 
 #endif /* TABLE_H  */

@@ -13,13 +13,15 @@ int init_block(char type,int number, Block** b)
 	{
 		case 't':
 		(*b)->capacity = 3;//can fit 3 tables per block
+		for(int i = 0;i<3;i++)
+			(*b)->tables[i] = 0;
 		break;
 		case 'f':
 		default:
 		(*b)->capacity = 0;
+		//(*b)->content = NULL;
 
 	}
-	(*b)->block_content = 0;
 	(*b)->next = 0;
 	return 1;
 }
@@ -33,7 +35,7 @@ int append_block(Block** first, Block** second)
 
 void free_block(Block** b)
 {
-	free((*b)->block_content);
+	//free((*b)->content);
 	free((*b)->next);
 	free (*b);
 }

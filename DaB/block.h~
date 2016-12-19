@@ -14,16 +14,20 @@ struct block_header
 	char type;//1 byte
 	unsigned short capacity; // must be calculated per type (table block uses such size, field block another, etc;
 	Block* next;//8 bytes
-	void* block_content;//8 bytes
+	//void* block_content;//8 bytes
+	union
+	{
+		Table* tables[3];
+	};
 };
 
-typedef struct 
+/*typedef struct 
 {
 	Table* table1; 
 	Table* table2; 
 	Table* table3; 
 }block_table;
-
+*/
 int init_block(char type, int number,  Block** b);
 int append_block(Block** first, Block** next);
 void free_block(Block** b);

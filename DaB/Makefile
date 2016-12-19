@@ -1,2 +1,2 @@
 ALL: 
-	gcc -o dab dab.c block.c table.c -std=c99 -g
+	gcc -o dab dab.c block.c table.c -std=c99 -g -Wall

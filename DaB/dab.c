@@ -9,10 +9,13 @@ char* get_tagline();
 int interpret_input(char* input);
 int parse_command(char command[32], char* comparison);
 void print_h();
-int first_available_block();
+int first_available_block(int output);
 int add_table(char* name);
 int extract_int(char* command);
 void clear();
+void reset();
+void print_tables();
+void update_metadata(int block);
 
 int write_tape();
 int read_tape();
@@ -29,27 +32,24 @@ int main()
 {
 	srand(time(NULL));
 	// Initialize Block list header
-	long length;
+	//init_block('t',0,&head_block);
 
 	// File I/O
 	f = fopen("database.dab","rb+");
 	if(!f)
 	{
 		// File not found! let's make it!
-		f = fopen("database.dab","wb+");
-		Metadata.next_metablock = -1;
-		for(int i = 0;i<62;i++)
-			Metadata.blocks[i] = 0;
-		Metadata.next_metablock = -1;
-		init_block('t',first_available_block(),&head_block);
-
+		reset();
 		if(write_tape())
 			printf("\nCreated Database file\n");
 	}
 	else	
+	{
 		printf("\nDatabase found\n");
-	length = ftell (f);     // get the length of the file
-	fseek (f, 64, SEEK_SET); // go to location of first block in file
+		read_tape();
+	}
+	//length = ftell (f);     // get the length of the file
+	//fseek (f, 64, SEEK_SET); // go to location of first block in file
 	//fread(tape,1,length,f);
 
 	// Initial greeting preparations & printing
@@ -74,7 +74,7 @@ int main()
 		       	input[len-1] = '\0';
 		exit = interpret_input(input);
 	}
-
+	write_tape();
 	free(head_block);
 	fclose(f);
 	return 0;
@@ -82,10 +82,28 @@ int main()
 
 int read_tape()
 {
-	
+	fseek(f,0,SEEK_SET);	
+	fread(Metadata.blocks,1,62,f);
+	fread(&(Metadata.next_metablock),sizeof(short),1,f);
+	Block* tmp = head_block;
+	while(tmp)
+	{
+		//int t_int = tmp->n_block;	
+		//char t_char = tmp->type;	
+		//unsigned short t_short = tmp->capacity;	
+		//TODO: write content of block
+		//char t_pointer[8] = {0,0,0,0,0,0,0,0};
+		
+		fread(&(head_block->n_block),1,sizeof(int),f);
+		fread(&(head_block->type),1,sizeof(char),f);
+		fread(&(head_block->capacity),1,sizeof(short),f);
+		tmp = tmp->next;
+	}
+	return 1;
 }
 int write_tape()
 {
+	fseek(f,0,SEEK_SET);	
 	fwrite(Metadata.blocks,1,62,f);
 	fwrite(&(Metadata.next_metablock),sizeof(short),1,f);
 
@@ -107,21 +125,32 @@ int write_tape()
 		tmp = tmp->next;
 	}
 	//TODO: write blocks here
+	return 1;
 }
-int first_available_block()
+int first_available_block(int output)
 {
 	for(int i = 0; i<62;i++)
 	{
 		if(Metadata.blocks[i] != 'f')//o for 'occupied'
 		{
-			printf("\nBlock available: %d",i);
+			if(output != 0)
+				printf("\nBlock available: %d",i);
 			return i;
 		}
 	}	
 	printf("\nBlock not available");
 	return -1;//TODO: make it so it continues with next metablock
 }
-
+void reset()
+{
+	f = fopen("database.dab","wb+");
+	Metadata.next_metablock = -1;
+	for(int i = 0;i<62;i++)
+		Metadata.blocks[i] = 0;
+	Metadata.next_metablock = -1;
+	init_block('t',first_available_block(0),&head_block);
+	printf("\nReset database\n");
+}
 int interpret_input(char* input)
 {
 	//command parsing tree (sorry for all the if/elses) :(	
@@ -137,14 +166,13 @@ int interpret_input(char* input)
 	{
 		add_table(input);
 	}
+	else if(parse_command(input,"r") == 1) 
+	{
+		reset();
+	}
 	else if(parse_command(input,"l") == 1) 
-		//print_tree(0,&root);
-		printf("Right back at ya.\n");
+		print_tables();
 	
-	//temporary! remove later!
-	else if(parse_command(input,"o") == 1) 
-		//order_keys(&root);
-		printf("Right back at ya.\n");
 	
 	//just for fun
 	else if(parse_command(input,"?") == 1) 
@@ -176,6 +204,19 @@ int parse_command(char command[32], char* comparison)
 	return 1;
 }
 
+void print_tables()
+{
+	Block* tmp = head_block;
+	while(!tmp)// && !tmp->content)
+	{
+		if(tmp->tables[0])
+			return;
+		printf("Table %s\n",tmp->tables[0]->name);
+		printf("Table %s\n",tmp->tables[1]->name);
+		printf("Table %s\n",tmp->tables[2]->name);
+		tmp = tmp->next;
+	}
+}
 int add_table(char* name)
 {
 	//we gotta grab the name from the command first
@@ -197,16 +238,24 @@ int add_table(char* name)
 		tmp2[8] = '\0';
 		strcpy(tmp,tmp2);
 	}
-	Table* t;
-	int block = first_available_block();
-	if(block != -1 && init_table(tmp,&t,block) == 1)
-	{	printf("\nCreated a new table \"%s\" at block %d.\n",t->name,t->first_field_block);
-		Metadata.blocks[block] += 1;
-		if(Metadata.blocks[block] == 3)
-			Metadata.blocks[block] = 'f';
-		//free(t);//TODO: DELET THIS later
+	int block = first_available_block(0);
+	printf("Attempting to add table at block %d.\n",block);
+
+	if(block != -1 && block != 0)// did this kinda backwards but it matters not at this point
+	{	
+		printf("Error adding table at block %d.\n",block);
+		return 0;
+	}
+	else if(block == 0)// no table created yet
+	{
+		init_table(tmp,&(head_block->tables[0]),block);
+		update_metadata(block);
+		/*printf("\nCreated a new table \"%s\"",((block_table*)head_block->block_content)->table1->name); 
+		printf(" at block %d.\n",head_block->n_block);*/
 		return 1;
 	}
+
+	printf("(end)Error adding table.\n");
 	return 0;
 }
 void print_h()
@@ -216,10 +265,16 @@ void print_h()
 	printf("\n\tNote: [int] in previous commands must be positive.\n");
 	printf("\nl\t Print out tree.");
 	printf("\nc\t Clear your troubles away.");
+	printf("\nr\t Reset everything to a blank slate.");
 	printf("\nh\t This thing is just spitting ?'s at me HELP.");
 	printf("\nq\t End it all.\n");
 }
-
+void update_metadata(int block)
+{
+	Metadata.blocks[block] += 1;
+	if(Metadata.blocks[block] == 3)
+		Metadata.blocks[block] = 'f';
+}
 int extract_int(char* command)
 {
 	char *tmp;
